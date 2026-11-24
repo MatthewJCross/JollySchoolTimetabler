@@ -1,0 +1,118 @@
+﻿<UserControl x:Class="JollySchoolTimetabler.Views.TeacherView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:JollySchoolTimetabler.Views"
+             xmlns:utils="clr-namespace:JollySchoolTimetabler.Utils"
+             xmlns:conv="clr-namespace:JollySchoolTimetabler.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="480" d:DesignWidth="320">
+    <UserControl.Resources>
+        <conv:LimitToColorConverter x:Key="LimitToColorConverter"/>
+        <conv:NullToBoolConverter x:Key="NullToBoolConverter"/>
+    </UserControl.Resources>
+    <Grid VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Teachers" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+
+        <StackPanel Orientation="Vertical" Margin="5" Grid.Row="1">
+            <TextBlock Text="Edit Selected Teacher:" FontWeight="Bold" Margin="0,0,0,5"/>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Teacher Id:" Width="60"/>
+                <TextBox Text="{Binding SelectedTeacher.TeacherId, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Christian:" Width="60"/>
+                <TextBox Text="{Binding SelectedTeacher.FirstName, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Surname:" Width="60"/>
+                <TextBox Text="{Binding SelectedTeacher.LastName, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Gender:" Width="60"/>
+                <TextBox Text="{Binding SelectedTeacher.Gender, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Email:" Width="60"/>
+                <TextBox Text="{Binding SelectedTeacher.Email, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Button Content="New" Command="{Binding NewTeacherCommand}"/>
+                <Button Content="Delete Selected" Command="{Binding DeleteTeacherCommand}" Margin="5,0,0,0" />
+            </StackPanel>
+        </StackPanel>
+
+        <GroupBox Header="Teachers" Grid.Row="2" Margin="5" >
+            <ListBox ItemsSource="{Binding Teachers}" SelectedItem="{Binding SelectedTeacher}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="ID {0} - {1} {2}">
+                                    <Binding Path="TeacherId" />
+                                    <Binding Path="FirstName" />
+                                    <Binding Path="LastName" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </GroupBox>
+
+        <GroupBox Header="Subjects" Grid.Row="3" Margin="5" >
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ListBox ItemsSource="{Binding Subjects}" SelectionMode="Multiple" utils:ListBoxSelectedItemsBehavior.SelectedItems="{Binding SelectedSubjects}" utils:ListBoxSelectedItemsBehavior.MaxSelectedItems="3" IsEnabled="{Binding SelectedTeacher, Converter={StaticResource NullToBoolConverter}}" VerticalAlignment="Stretch" Foreground="#202020">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="5,3"/>
+                            <Setter Property="Margin" Value="1"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="#202020"/>
+                            <Setter Property="FontWeight" Value="Normal"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#C8E8D2"/>
+                                    <Setter Property="Foreground" Value="#153D29"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Name}" />
+                                <TextBlock Text=" ("/>
+                                <TextBlock Text="{Binding SubjectId}"/>
+                                <TextBlock Text=")"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <StackPanel Orientation="Vertical" Grid.Row="1" Margin="5">
+                    <TextBlock Text="{Binding SelectedSubjectCount, StringFormat='Subjects Selected: {0}/3'}" Grid.Row="1" Foreground="{Binding SelectedSubjectCount, Converter={StaticResource LimitToColorConverter}, ConverterParameter=3}" FontWeight="Bold" Margin="0,4,0,0" HorizontalAlignment="Center"/>
+                    <Button Content="Save Subjects" Command="{Binding SaveSubjectsCommand}" Margin="0,10,0,0" IsEnabled="{Binding SelectedTeacher, Converter={StaticResource NullToBoolConverter}}" Grid.Row="2"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

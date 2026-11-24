@@ -1,0 +1,155 @@
+<UserControl x:Class="JollySchoolTimetabler.Views.TimetableView"
+             x:Name="RootControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:conv="clr-namespace:JollySchoolTimetabler.Converters"
+             xmlns:enums="clr-namespace:JollySchoolTimetabler.Enums"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="900">
+
+    <UserControl.Resources>
+        <conv:TimetableEntryConverter x:Key="TimetableEntryConverter" />
+
+        <Style x:Key="TimetableCellBorder" TargetType="Border">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#CCC"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Margin" Value="1"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="MinHeight" Value="90"/>
+            <Setter Property="Background" Value="#FFFFFF"/>
+
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.CurrentMode, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Student">
+                    <Setter Property="Background" Value="#D6E9FF"/>
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding DataContext.CurrentMode, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Teacher">
+                    <Setter Property="Background" Value="#D6FFD8"/>
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding DataContext.CurrentMode, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Class">
+                    <Setter Property="Background" Value="#FFFAD6"/>
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding DataContext.CurrentMode, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Room">
+                    <Setter Property="Background" Value="#FFD6D6"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Mode selector -->
+            <RowDefinition Height="Auto"/>
+            <!-- Day headers -->
+            <RowDefinition Height="*"/>
+            <!-- Timetable -->
+        </Grid.RowDefinitions>
+
+        <!-- Mode Selector -->
+        <StackPanel Orientation="Horizontal" Margin="10,5" Grid.Row="0" VerticalAlignment="Center">
+            <TextBlock Text="Mode:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <ComboBox Width="150" SelectedItem="{Binding CurrentMode, Mode=TwoWay}">
+                <ComboBox.ItemsSource>
+                    <x:Array Type="{x:Type enums:TimetableMode}">
+                        <enums:TimetableMode>Student</enums:TimetableMode>
+                        <enums:TimetableMode>Teacher</enums:TimetableMode>
+                        <enums:TimetableMode>Class</enums:TimetableMode>
+                        <enums:TimetableMode>Room</enums:TimetableMode>
+                    </x:Array>
+                </ComboBox.ItemsSource>
+            </ComboBox>
+            <ComboBox Width="180" Margin="8,0,0,0" ItemsSource="{Binding Students}" SelectedItem="{Binding SelectedStudent, Mode=TwoWay}" DisplayMemberPath="FullDetails" ToolTip="Select a student to load their saved timetable">
+                <ComboBox.Style><Style TargetType="ComboBox"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding CurrentMode}" Value="Student"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></ComboBox.Style>
+            </ComboBox>
+            <ComboBox Width="180" Margin="8,0,0,0" ItemsSource="{Binding Teachers}" SelectedItem="{Binding SelectedTeacher, Mode=TwoWay}" DisplayMemberPath="FullName" ToolTip="Select a teacher to load their saved timetable">
+                <ComboBox.Style><Style TargetType="ComboBox"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding CurrentMode}" Value="Teacher"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></ComboBox.Style>
+            </ComboBox>
+            <ComboBox Width="180" Margin="8,0,0,0" ItemsSource="{Binding Rooms}" SelectedItem="{Binding SelectedRoom, Mode=TwoWay}" DisplayMemberPath="Name" ToolTip="Select a room to view and edit its timetable">
+                <ComboBox.Style><Style TargetType="ComboBox"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding CurrentMode}" Value="Room"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></ComboBox.Style>
+            </ComboBox>
+            <TextBlock Text="{Binding ModeDisplayName}" Margin="15,0,12,0" FontWeight="Bold" VerticalAlignment="Center"/>
+            <Button Content="Reload saved timetable" Command="{Binding ReloadCommand}" Margin="8,0" Padding="8,3"/>
+            <TextBlock Text="{Binding TimetableSummary}" Foreground="#555" VerticalAlignment="Center" TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <!-- Day Headers -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <ItemsControl Grid.Column="1" ItemsSource="{Binding Days}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="1" Columns="{Binding Days.Count}" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderThickness="0" BorderBrush="#CCC" Padding="5">
+                            <TextBlock Text="{Binding}" FontWeight="Bold" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+
+        <!-- Main Timetable -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Period Labels -->
+                <ItemsControl Grid.Column="0" ItemsSource="{Binding Periods}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="{Binding Periods.Count}" Columns="1"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderThickness="0" BorderBrush="#DDD" VerticalAlignment="Stretch">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding Number, StringFormat=Period {0}}" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding TimeRange}" FontSize="10" Foreground="Gray" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Timetable Cells -->
+                <ItemsControl Grid.Column="1" ItemsSource="{Binding PeriodCells}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="{Binding Days.Count}" 
+                                         Rows="{Binding Periods.Count}"
+                                         HorizontalAlignment="Stretch"
+                                         VerticalAlignment="Stretch"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource TimetableCellBorder}">
+                                <TextBlock Text="{Binding DisplayText}" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

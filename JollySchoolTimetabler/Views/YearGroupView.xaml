@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="JollySchoolTimetabler.Views.YearGroupView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:JollySchoolTimetabler.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="420" d:DesignWidth="320">
+    <Grid VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Year Groups" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+
+        <StackPanel Orientation="Vertical" Margin="5" Grid.Row="1">
+            <TextBlock Text="Edit Selected YearGroup:" FontWeight="Bold" Margin="0,0,0,5"/>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="YrGroup Id:" Width="80"/>
+                <TextBox Text="{Binding SelectedYearGroup.YearGroupId, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Yr Group:" Width="80"/>
+                <TextBox Text="{Binding SelectedYearGroup.Name, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Button Content="New" Command="{Binding NewYearGroupCommand}"/>
+                <Button Content="Delete Selected" Command="{Binding DeleteYearGroupCommand}" Margin="5,0,0,0" />
+            </StackPanel>
+        </StackPanel>
+
+        <ListBox ItemsSource="{Binding YearGroups}" SelectedItem="{Binding SelectedYearGroup}" Margin="5,0,5,5">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="ID {0} - {1}">
+                                <Binding Path="YearGroupId" />
+                                <Binding Path="Name" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

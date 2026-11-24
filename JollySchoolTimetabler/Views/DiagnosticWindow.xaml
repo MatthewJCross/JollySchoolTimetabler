@@ -1,0 +1,62 @@
+﻿<Window x:Class="JollySchoolTimetabler.Views.DiagnosticWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Timetable Diagnostics"
+        Height="450"
+        Width="600"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <TextBlock Text="Timetable Diagnostic Report"
+                   FontSize="18"
+                   FontWeight="Bold"
+                   Margin="0 0 0 10"/>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Failed Classes -->
+            <GroupBox Header="Failed Classes" Grid.Column="0" Margin="5">
+                <ListBox ItemsSource="{Binding FailedClasses}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </GroupBox>
+
+            <!-- Diagnostic Log -->
+            <GroupBox Header="Diagnostic Log" Grid.Column="1" Margin="5">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <TextBox Text="{Binding DiagnosticLog}"
+                             IsReadOnly="True"
+                             TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto"
+                             Background="#FFFDFDFD"
+                             BorderThickness="0"/>
+                </ScrollViewer>
+            </GroupBox>
+        </Grid>
+
+        <!-- Close Button -->
+        <Button Content="Close"
+                Width="80"
+                HorizontalAlignment="Right"
+                Margin="0 10 0 0"
+                Grid.Row="2"
+                IsCancel="True" />
+    </Grid>
+</Window>

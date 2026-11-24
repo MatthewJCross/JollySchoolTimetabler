@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="JollySchoolTimetabler.Views.ClassView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:JollySchoolTimetabler.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="420" d:DesignWidth="320">
+    <Grid VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Classes" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+
+        <StackPanel Orientation="Vertical" Margin="5" Grid.Row="1">
+            <TextBlock Text="Edit Selected Class:" FontWeight="Bold" Margin="0,0,0,5"/>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Class Id:" Width="70"/>
+                <TextBox Text="{Binding SelectedClass.ClassId, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Teacher:" Width="70"/>
+                <ComboBox Width="120" ItemsSource="{Binding Teachers}" SelectedValuePath="TeacherId" DisplayMemberPath="LastName" SelectedValue="{Binding SelectedClass.TeacherId, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Subject:" Width="70"/>
+                <ComboBox Width="120" ItemsSource="{Binding Subjects}" SelectedValuePath="SubjectId" DisplayMemberPath="Name" SelectedValue="{Binding SelectedClass.SubjectId, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Room:" Width="70"/>
+                <ComboBox Width="120" ItemsSource="{Binding Rooms}" SelectedValuePath="RoomId" DisplayMemberPath="Name" SelectedValue="{Binding SelectedClass.RoomId, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Year Group:" Width="70"/>
+                <ComboBox Width="120" ItemsSource="{Binding YearGroups}" SelectedValuePath="YearGroupId" DisplayMemberPath="Name" SelectedValue="{Binding SelectedClass.YearGroupId, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Button Content="New" Command="{Binding NewClassCommand}"/>
+                <Button Content="Delete Selected" Command="{Binding DeleteClassCommand}" Margin="5,0,0,0" />
+            </StackPanel>
+        </StackPanel>
+
+        <ListBox ItemsSource="{Binding Classes}" SelectedItem="{Binding SelectedClass}" Margin="5,0,5,5" Grid.Row="2">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="ID {0} - {1} {2} {3}">
+                                <Binding Path="ClassId" />
+                                <Binding Path="Name" />
+                                <Binding Path="Teacher.FullName" />
+                                <Binding Path="Room.Name" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>
